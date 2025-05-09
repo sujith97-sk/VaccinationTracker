@@ -41,6 +41,7 @@ API Endpoints
   - `POST /students`: Add a new student.
   - `PUT /students/{student_id}`: Edit an existing student.
   - `POST /bulk_import`: Bulk import students from a JSON payload.
+  - `GET /students/vaccinated`: Get a list of vaccinated students.
 - **Vaccination**
   - `POST /vaccination/{student_id}`: Mark a student as vaccinated.
   - `POST /drive`: Add a new vaccination drive.

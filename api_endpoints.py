@@ -46,9 +46,8 @@ async def edit_student(student_id, student):
 
 
 @app.get("/students")
-async def search_students(name: str = None, class_name: str = None, student_id: str = None, vaccinated: bool = None):
-    query = {k: v for k, v in {"name": name, "class": class_name, "student_id": student_id, "vaccinated": vaccinated}.items() if v is not None}
-    result = await api.search_students(query)
+async def search_students():
+    result = await api.get_all_students()
     return result
 
 
@@ -75,4 +74,9 @@ async def bulk_import_students(student_data):
     result = await api.bulk_import_students(student_data)
     return {"message": f"{result} students imported successfully"}
 
+
+@app.get("/students/vaccinated")
+async def get_vaccinated_students():
+    result = await api.get_vaccinated_students()
+    return result
 
