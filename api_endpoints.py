@@ -80,7 +80,8 @@ async def bulk_import_students(file: UploadFile):
     if file.content_type != "text/csv":
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload a CSV file.")
     content = await file.read()
-    csv_data = csv.DictReader(content.decode("utf-8").splitlines())
+    decoded_content = content.decode("utf-8-sig")
+    csv_data = csv.DictReader(decoded_content.splitlines())
     student_data = [row for row in csv_data]
     result = await api.bulk_import_students(student_data)
     return {"message": f"{result} students imported successfully"}
