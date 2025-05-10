@@ -143,7 +143,7 @@ class APIHelper:
         return result.modified_count > 0
 
     async def add_vaccination_drive(self, drive_data):
-        collection = self.create_connection()
+        collection = self.create_connection("Drives")
         result = collection.insert_one(drive_data)
         self.close_connection()
         return result.inserted_id
