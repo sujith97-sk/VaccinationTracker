@@ -1,6 +1,7 @@
 import json
 import csv
-from fastapi import FastAPI, Query, requests, Request, UploadFile, HTTPException
+from fastapi import FastAPI, Query, requests, Request, UploadFile, HTTPException, Query
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from helper import APIHelper
@@ -46,8 +47,8 @@ async def edit_student(student_id, student):
 
 
 @app.get("/students")
-async def search_students():
-    result = await api.get_all_students()
+async def search_students(limit: int = Query(...), offset: int = Query(...)):
+    result = await api.get_all_students(limit=limit, offset=offset)
     return result
 
 
