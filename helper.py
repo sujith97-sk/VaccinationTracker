@@ -66,13 +66,14 @@ class APIHelper:
 
     async def get_upcoming_drives(self):
         collection = self.create_connection("Drives")
-        current_time = datetime.now(pytz.utc)
+        ist = pytz.timezone("Asia/Kolkata")
+        current_time = datetime.now(ist)
         fifteen_days_later = current_time + timedelta(days=15)
-        iso_current = current_time.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-        iso_fifteen = fifteen_days_later.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+        iso_current = current_time.strftime('%Y-%m-%dT%H:%M:%S+05:30')
+        iso_fifteen = fifteen_days_later.strftime('%Y-%m-%dT%H:%M:%S+05:30')
         print(iso_current, iso_fifteen)
         query = {
-            "date": {"$gte": iso_current, "$lte": iso_fifteen}
+            "scheduled_date": {"$gte": iso_current, "$lte": iso_fifteen}
         }
         documents = collection.find(query, {"_id": 0})
         return list(documents)
