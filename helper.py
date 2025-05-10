@@ -112,7 +112,7 @@ class APIHelper:
 
     async def get_all_students(self, offset=0, limit=10):
         collection = self.create_connection()
-        students = list(collection.find({}).skip(offset).limit(limit))
+        students = list(collection.find({}, {"_id": 0}).skip(offset).limit(limit))
         self.close_connection()
         return students
 
