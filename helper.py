@@ -100,6 +100,9 @@ class APIHelper:
     async def bulk_import_students(self, csv_data):
         collection = self.create_connection()
         students = list(csv_data)
+        for student in students:
+            student["vaccinated"] = False
+            student["vaccines"] = []
         result = collection.insert_many(students)
         self.close_connection()
         return len(result.inserted_ids)

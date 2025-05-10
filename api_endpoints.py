@@ -59,8 +59,9 @@ async def mark_vaccinated(student_id, vaccine, drive):
 
 
 @app.post("/drive")
-async def add_vaccination_drive(drive_data):
-    result = await api.add_vaccination_drive(drive_data)
+async def add_vaccination_drive(request: Request):
+    data = await request.json()
+    result = await api.add_vaccination_drive(data)
     return {"message": "Vaccination drive added successfully"} if result else HTTPException(status_code=400, detail="Vaccination drive addition failed")
 
 
