@@ -109,7 +109,7 @@ async def edit_vaccination_drive(request: Request):
                                                                                               detail="Vaccination drive not found")
 
 
-@app.get('/drive_names')
+@app.get('/drive/drive_names')
 async def get_vaccination_drive_names():
     result = await api.get_vaccination_drive_names()
     return result
