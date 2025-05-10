@@ -147,3 +147,9 @@ class APIHelper:
         result = collection.insert_one(drive_data)
         self.close_connection()
         return result.inserted_id
+
+    async def get_vaccination_drives(self):
+        collection = self.create_connection("Drives")
+        drives = list(collection.find({}, {"_id": 0}))
+        self.close_connection()
+        return drives

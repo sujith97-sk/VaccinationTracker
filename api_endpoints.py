@@ -82,3 +82,8 @@ async def get_vaccinated_students():
     result = await api.get_vaccinated_students()
     return result
 
+
+@app.get('/drive')
+async def get_vaccination_drives():
+    result = await api.get_vaccination_drives()
+    return result
