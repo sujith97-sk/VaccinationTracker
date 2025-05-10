@@ -99,7 +99,7 @@ async def get_vaccination_drives(limit: int = Query(...), offset: int = Query(..
     return result
 
 
-@app.put('/drive/{drive_name')
+@app.put('/drive')
 async def edit_vaccination_drive(request: Request):
     response = await request.json()
     drive_name = response.get("drive_name")
