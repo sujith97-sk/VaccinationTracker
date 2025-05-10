@@ -5,6 +5,7 @@ from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from helper import APIHelper
+import csv
 
 app = FastAPI()
 app.add_middleware(
@@ -33,7 +34,8 @@ async def add_student(student: dict):
 @app.put("/students/{student_id}")
 async def edit_student(student_id, student):
     result = await api.edit_student(student_id, student)
-    return {"message": "Student updated successfully"} if result else HTTPException(status_code=404, detail="Student not found")
+    return {"message": "Student updated successfully"} if result else HTTPException(status_code=404,
+                                                                                    detail="Student not found")
 
 
 # @app.post("/students/bulk_import")
@@ -55,14 +57,16 @@ async def search_students(limit: int = Query(...), offset: int = Query(...)):
 @app.post("/vaccination/{student_id}")
 async def mark_vaccinated(student_id, vaccine, drive):
     result = await api.mark_vaccinated(student_id, vaccine, drive)
-    return {"message": "Student marked as vaccinated"} if result else HTTPException(status_code=400, detail="Vaccination update failed")
+    return {"message": "Student marked as vaccinated"} if result else HTTPException(status_code=400,
+                                                                                    detail="Vaccination update failed")
 
 
 @app.post("/drive")
 async def add_vaccination_drive(request: Request):
     data = await request.json()
     result = await api.add_vaccination_drive(data)
-    return {"message": "Vaccination drive added successfully"} if result else HTTPException(status_code=400, detail="Vaccination drive addition failed")
+    return {"message": "Vaccination drive added successfully"} if result else HTTPException(status_code=400,
+                                                                                            detail="Vaccination drive addition failed")
 
 
 @app.get("/login")
@@ -72,8 +76,12 @@ async def login():
 
 
 @app.post("/bulk_import")
-async def bulk_import_students(request: Request):
-    student_data = await request.json()
+async def bulk_import_students(file: UploadFile):
+    if file.content_type != "text/csv":
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a CSV file.")
+    content = await file.read()
+    csv_data = csv.DictReader(content.decode("utf-8").splitlines())
+    student_data = [row for row in csv_data]
     result = await api.bulk_import_students(student_data)
     return {"message": f"{result} students imported successfully"}
 
@@ -96,4 +104,5 @@ async def edit_vaccination_drive(request: Request):
     drive_name = response.get("drive_name")
     drive_data = response.get("drive_data")
     result = await api.edit_vaccination_drive(drive_name, drive_data)
-    return {"message": "Vaccination drive updated successfully"} if result else HTTPException(status_code=404, detail="Vaccination drive not found")
+    return {"message": "Vaccination drive updated successfully"} if result else HTTPException(status_code=404,
+                                                                                              detail="Vaccination drive not found")
