@@ -105,7 +105,7 @@ class APIHelper:
             student["vaccines"] = []
         result = collection.insert_many(students)
         self.close_connection()
-        return len(result.inserted_ids)
+        return len(result.inserted_ids) + 1
 
     async def search_students(self, query):
         collection = self.create_connection()
@@ -148,9 +148,9 @@ class APIHelper:
         self.close_connection()
         return result.inserted_id
 
-    async def get_vaccination_drives(self):
+    async def get_vaccination_drives(self, limit, offset):
         collection = self.create_connection("Drives")
-        drives = list(collection.find({}, {"_id": 0}))
+        drives = list(collection.find({}, {"_id": 0}).skip(offset).limit(limit))
         self.close_connection()
         return drives
 

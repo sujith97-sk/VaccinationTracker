@@ -93,8 +93,8 @@ async def get_vaccinated_students():
 
 
 @app.get('/drive')
-async def get_vaccination_drives():
-    result = await api.get_vaccination_drives()
+async def get_vaccination_drives(limit: int = Query(...), offset: int = Query(...)):
+    result = await api.get_vaccination_drives(limit=limit, offset=offset)
     return result
 
 
