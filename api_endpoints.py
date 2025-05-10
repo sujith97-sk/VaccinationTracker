@@ -107,3 +107,9 @@ async def edit_vaccination_drive(request: Request):
     result = await api.edit_vaccination_drive(drive_name, drive_data)
     return {"message": "Vaccination drive updated successfully"} if result else HTTPException(status_code=404,
                                                                                               detail="Vaccination drive not found")
+
+
+@app.get('/drive_names')
+async def get_vaccination_drive_names():
+    result = await api.get_vaccination_drive_names()
+    return result

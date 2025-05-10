@@ -126,18 +126,22 @@ class APIHelper:
         self.close_connection()
         return students
 
-    async def mark_vaccinated(self, student_id, vaccine, drive):
+    async def mark_vaccinated(self, student_id, drive):
         collection = self.create_connection()
+        drive_collection = self.create_connection("Drives")
+        vaccine = drive_collection.find_one({"name": drive}.get("vaccine"))
+        date = drive_collection.find_one({"name": drive}).get("scheduled_date")
         student = collection.find_one({"roll_number": student_id})
         if not student:
             self.close_connection()
             return False
         vaccination_record = student.get("vaccines", [])
-        for record in vaccination_record:
-            if record["vaccine"] == vaccine and record["drive"] == drive:
-                self.close_connection()
-                return False
-        vaccination_record.append({"vaccine": vaccine, "drive": drive, "date": datetime.now()})
+        if student.get('vaccinated', False):
+            for record in vaccination_record:
+                if record["vaccine"] == vaccine and record["drive"] == drive:
+                    self.close_connection()
+                    return False
+        vaccination_record.append({"vaccine": vaccine, "drive": drive, "date": date})
         result = collection.update_one({"roll_number": student_id}, {"$set": {"vaccines": vaccination_record,
                                                                               "vaccinated": True}})
         self.close_connection()
@@ -160,3 +164,9 @@ class APIHelper:
         result = collection.update_one({"name": drive_name}, {"$set": drive_data})
         self.close_connection()
         return result.modified_count > 0
+
+    async def get_vaccination_drive_names(self):
+        collection = self.create_connection("Drives")
+        drives = list(collection.find({}, {"_id": 0, "name": 1}))
+        self.close_connection()
+        return drives
