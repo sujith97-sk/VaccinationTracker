@@ -54,9 +54,12 @@ async def search_students(limit: int = Query(...), offset: int = Query(...)):
     return result
 
 
-@app.post("/vaccination/{student_id}")
-async def mark_vaccinated(student_id, vaccine, drive):
-    result = await api.mark_vaccinated(student_id, vaccine, drive)
+@app.post("/vaccination/mark_vaccinated")
+async def mark_vaccinated(request: Request):
+    data = await request.json()
+    student_id = data.get("student_id")
+    drive = data.get("drive")
+    result = await api.mark_vaccinated(student_id, drive)
     return {"message": "Student marked as vaccinated"} if result else HTTPException(status_code=400,
                                                                                     detail="Vaccination update failed")
 
