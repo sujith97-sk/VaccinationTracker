@@ -113,3 +113,9 @@ async def edit_vaccination_drive(request: Request):
 async def get_vaccination_drive_names():
     result = await api.get_vaccination_drive_names()
     return result
+
+
+@app.get('/students/{student_id}')
+async def get_student_by_id(student_id):
+    result = await api.get_student_by_id(student_id)
+    return result

@@ -170,3 +170,9 @@ class APIHelper:
         drives = list(collection.find({}, {"_id": 0, "name": 1}))
         self.close_connection()
         return drives
+
+    async def get_student_by_id(self, student_id):
+        collection = self.create_connection()
+        student = collection.find_one({"roll_number": student_id}, {"_id": 0})
+        self.close_connection()
+        return student
