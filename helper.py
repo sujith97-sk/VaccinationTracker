@@ -153,3 +153,9 @@ class APIHelper:
         drives = list(collection.find({}, {"_id": 0}))
         self.close_connection()
         return drives
+
+    async def edit_vaccination_drive(self, drive_name, drive_data):
+        collection = self.create_connection("Drives")
+        result = collection.update_one({"name": drive_name}, {"$set": drive_data})
+        self.close_connection()
+        return result.modified_count > 0
