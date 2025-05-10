@@ -72,7 +72,8 @@ async def login():
 
 
 @app.post("/bulk_import")
-async def bulk_import_students(student_data):
+async def bulk_import_students(request: Request):
+    student_data = await request.json()
     result = await api.bulk_import_students(student_data)
     return {"message": f"{result} students imported successfully"}
 
