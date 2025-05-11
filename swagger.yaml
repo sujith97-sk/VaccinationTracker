@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: Vaccination Tracker API
+  version: 1.0.0
+  description: API documentation for managing students and vaccination drives.
+servers:
+  - url: http://localhost:8000
+paths:
+  /dashboard:
+    get:
+      summary: Get dashboard data
+      responses:
+        '200':
+          description: Dashboard data retrieved successfully
+
+  /students:
+    post:
+      summary: Add a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: John Doe
+                roll_number: 123
+                class: 10
+                vaccinated: false
+      responses:
+        '200':
+          description: Student added successfully
+    get:
+      summary: Get all students
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of students retrieved successfully
+
+  /students/{student_id}:
+    put:
+      summary: Edit student details
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Jane Doe
+                class: 11
+      responses:
+        '200':
+          description: Student updated successfully
+    get:
+      summary: Get student by ID
+      parameters:
+        - name: student_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Student details retrieved successfully
+
+  /students/vaccinated:
+    get:
+      summary: Get vaccinated or unvaccinated students
+      parameters:
+        - name: vaccinated
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: List of students retrieved successfully
+
+  /students/class:
+    get:
+      summary: Get students by class
+      parameters:
+        - name: class_number
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of students retrieved successfully
+
+  /students/vaccine:
+    get:
+      summary: Get students by vaccine
+      parameters:
+        - name: vaccine
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of students retrieved successfully
+
+  /vaccination/mark_vaccinated:
+    post:
+      summary: Mark a student as vaccinated
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                student_id: 123
+                drive: "Drive 1"
+      responses:
+        '200':
+          description: Student marked as vaccinated
+
+  /vaccination/vaccines:
+    get:
+      summary: Get available vaccine names
+      responses:
+        '200':
+          description: List of vaccine names retrieved successfully
+
+  /drive:
+    post:
+      summary: Add a new vaccination drive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: "Drive 1"
+                vaccine: "COVID-19"
+                scheduled_date: "2023-12-01T10:00:00+05:30"
+      responses:
+        '200':
+          description: Vaccination drive added successfully
+    get:
+      summary: Get all vaccination drives
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of vaccination drives retrieved successfully
+    put:
+      summary: Edit a vaccination drive
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                drive_name: "Drive 1"
+                drive_data:
+                  vaccine: "COVID-19 Updated"
+                  scheduled_date: "2023-12-05T10:00:00+05:30"
+      responses:
+        '200':
+          description: Vaccination drive updated successfully
+
+  /drive/drive_names:
+    get:
+      summary: Get vaccination drive names
+      responses:
+        '200':
+          description: List of vaccination drive names retrieved successfully

@@ -67,9 +67,9 @@ async def mark_vaccinated(request: Request):
 @app.post("/drive")
 async def add_vaccination_drive(request: Request):
     data = await request.json()
-    result = await api.add_vaccination_drive(data)
+    result, message = await api.add_vaccination_drive(data)
     return {"message": "Vaccination drive added successfully"} if result else HTTPException(status_code=400,
-                                                                                            detail="Vaccination drive addition failed")
+                                                                                            detail=message)
 
 
 @app.get("/login")
@@ -91,9 +91,17 @@ async def bulk_import_students(file: UploadFile):
 
 
 @app.get("/students/vaccinated")
-async def get_vaccinated_students():
-    result = await api.get_vaccinated_students()
+async def get_vaccinated_students(vaccinated: bool = Query(...)):
+    result = await api.get_vaccinated_students(vaccinated)
     return result
+
+
+@app.get("/students/class")
+async def get_students_by_class(class_number: Optional[int] = Query(None)):
+    if class_number is not None:
+        result = await api.get_students_by_class(str(class_number))
+        return result
+    return {"message": "Please provide a valid class number as a query parameter"}
 
 
 @app.get('/drive')
@@ -121,4 +129,17 @@ async def get_vaccination_drive_names():
 @app.get('/students/{student_id}')
 async def get_student_by_id(student_id):
     result = await api.get_student_by_id(student_id)
+    return result
+
+
+@app.get("/vaccination/vaccines")
+async def get_vaccine_names():
+    result = await api.get_vaccine_names()
+    return result
+
+
+@app.get("/students/vaccine")
+async def get_students_by_vaccine(vaccine: Optional[str] = Query(None)):
+    print("vaccine", vaccine)
+    result = await api.get_students_by_vaccine(vaccine)
     return result

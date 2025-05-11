@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime, timedelta
 import pytz
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 
@@ -120,9 +120,9 @@ class APIHelper:
         self.close_connection()
         return students
 
-    async def get_vaccinated_students(self):
+    async def get_vaccinated_students(self, vaccinated):
         collection = self.create_connection()
-        students = self.get_documents_list(collection, {"vaccinated": True})
+        students = list(collection.find({"vaccinated": vaccinated}, {"_id": 0}))
         self.close_connection()
         return students
 
@@ -149,9 +149,17 @@ class APIHelper:
 
     async def add_vaccination_drive(self, drive_data):
         collection = self.create_connection("Drives")
+        date = drive_data.get("scheduled_date")
+        ist = pytz.timezone("Asia/Kolkata")
+        current_time = datetime.now(ist)
+        fifteen_days_later = current_time + timedelta(days=15)
+        scheduled_date = datetime.fromisoformat(date)
+        if current_time <= scheduled_date <= fifteen_days_later:
+            self.close_connection()
+            return False, "Scheduled date must be more than fifteen days from today"
         result = collection.insert_one(drive_data)
         self.close_connection()
-        return result.inserted_id
+        return True, result.inserted_id
 
     async def get_vaccination_drives(self, limit, offset):
         collection = self.create_connection("Drives")
@@ -176,3 +184,23 @@ class APIHelper:
         student = collection.find_one({"roll_number": student_id}, {"_id": 0})
         self.close_connection()
         return student
+
+    async def get_students_by_class(self, class_number):
+        collection = self.create_connection()
+        students = list(collection.find({"class": class_number}, {"_id": 0}))
+        self.close_connection()
+        return students
+
+    async def get_vaccine_names(self):
+        collection = self.create_connection("Drives")
+        vaccines = list(collection.find({}, {"_id": 0, "vaccine": 1}))
+        result = [vaccine.get("vaccine") for vaccine in vaccines if vaccine.get("vaccine")]
+        self.close_connection()
+        return result
+
+    async def get_students_by_vaccine(self, vaccine):
+        collection = self.create_connection()
+        print(vaccine)
+        students = list(collection.find({"vaccines.vaccine": vaccine}, {"_id": 0}))
+        self.close_connection()
+        return students if students else []
