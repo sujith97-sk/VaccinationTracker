@@ -129,7 +129,7 @@ class APIHelper:
     async def mark_vaccinated(self, student_id, drive):
         collection = self.create_connection()
         drive_collection = self.create_connection("Drives")
-        vaccine = drive_collection.find_one({"name": drive}.get("vaccine"))
+        vaccine = drive_collection.find_one({"name": drive}).get("vaccine")
         date = drive_collection.find_one({"name": drive}).get("scheduled_date")
         student = collection.find_one({"roll_number": student_id})
         if not student:
